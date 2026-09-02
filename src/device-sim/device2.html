@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            background: #222222;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Device 2</h1>
+    <script type="module" >
+        import { createNote, getNote, deleteNote, saveNote } from '/src/device/noteStorage.ts';
+        import { getOutbox, clearOutbox } from '/src/device/outbox.ts';
+        import { pullChanges, syncOutbox, startAutoSync } from '/src/device/sync.ts';
+
+        window.createNote = createNote;
+        window.saveNote = saveNote;
+        window.getNote = getNote;
+        window.deleteNote = deleteNote;
+        window.getOutbox = getOutbox;
+        window.clearOutbox = clearOutbox;
+        window.pullChanges = pullChanges;
+        window.syncOutbox = syncOutbox;
+
+        startAutoSync()
+    </script>
+</body>
+</html>
