@@ -87,25 +87,25 @@ This allows delete operations to be synchronized between devices. Without a tomb
 Install dependencies:
 
 ```bash
-pnpm install
+npm install
 ```
 
 Start the PostgreSQL database if it is not already running, then start the sync server:
 
 ```bash
-pnpm run server
+npm run server
 ```
 
 Start the first device:
 
 ```bash
-pnpm exec vite --port 5173
+npx vite --port 5173
 ```
 
 Start the second device in another terminal:
 
 ```bash
-pnpm exec vite --port 5174
+npx vite --port 5174
 ```
 
 Open these pages in separate browser tabs:
