@@ -7,7 +7,8 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "server": "tsx src/server/server.ts"
+    "server": "tsx src/server/server.ts",
+    "migrate": "tsx src/server/db/migrate.ts"
   },
   "devDependencies": {
     "@types/node": "^26.4.0",
