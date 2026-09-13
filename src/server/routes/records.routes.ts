@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { pushRecord, pullChanges } from '../controllers/records..controller.js';
+import { pushRecord, pullChanges } from '../controllers/records.controller.js';
 
 const router = Router();
 

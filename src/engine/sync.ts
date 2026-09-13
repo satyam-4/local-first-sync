@@ -85,9 +85,9 @@ export async function syncOutbox(): Promise<void> {
     }
 }
 
-// export function startAutoSync(intervalMs: number = 5000): void {
-//     window.addEventListener('online', syncOutbox);
-//     window.addEventListener('online', pullChanges);
-//     setInterval(syncOutbox, intervalMs);
-//     setInterval(pullChanges, intervalMs);
-// }
+export function startAutoSync(intervalMs: number = 5000): void {
+    window.addEventListener('online', syncOutbox);
+    window.addEventListener('online', pullChanges);
+    setInterval(syncOutbox, intervalMs);
+    setInterval(pullChanges, intervalMs);
+}

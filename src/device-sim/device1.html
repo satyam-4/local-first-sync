@@ -11,20 +11,23 @@
 <body>
     <h1>Device 1</h1>
     <script type="module" >
-        import { createNote, getNote, deleteNote, saveNote } from '/src/device/noteStorage.ts';
-        import { getOutbox, clearOutbox } from '/src/device/outbox.ts';
-        import { pullChanges, syncOutbox, startAutoSync } from '/src/device/sync.ts';
+        import { createNote, saveNote, getAllNotes } from '/src/collections/noteStorage.ts';
+        import { createTask, saveTask, getAllTasks } from '/src/collections/taskStorage.ts';
+        import { getOutbox, clearOutbox } from '/src/engine/outbox.ts';
+        import { pullChanges, syncOutbox, startAutoSync } from '/src/engine/sync.ts';
 
         window.createNote = createNote;
         window.saveNote = saveNote;
-        window.getNote = getNote;
-        window.deleteNote = deleteNote;
+        window.getAllNotes = getAllNotes;
+        window.createTask = createTask;
+        window.saveTask = saveTask;
+        window.getAllTasks = getAllTasks;
         window.getOutbox = getOutbox;
         window.clearOutbox = clearOutbox;
         window.pullChanges = pullChanges;
         window.syncOutbox = syncOutbox;
 
-        startAutoSync()
+        // startAutoSync()
     </script>
 </body>
 </html>
