@@ -10,7 +10,8 @@ export interface RecordRow {
 
 export interface PushRecordRequest {
     id: string;
-    data: unknown,
+    collection: string;
+    data: unknown;
     updatedAt: number;
     deviceId: string;
     deleted: boolean;

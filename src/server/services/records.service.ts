@@ -4,9 +4,9 @@ import type { RecordRow, PushRecordRequest } from '../types/record.js';
 export async function insertRecord(records: PushRecordRequest[]): Promise<void> {
     for (const record of records) {
         await pool.query(
-            `INSERT INTO records (id, data, updated_at, device_id, deleted)
-             VALUES ($1, $2, $3, $4, $5)`,
-            [record.id, record.data, record.updatedAt, record.deviceId, record.deleted]
+            `INSERT INTO records (id, collection, data, updated_at, device_id, deleted)
+             VALUES ($1, $2, $3, $4, $5, $6)`,
+            [record.id, record.collection, record.data, record.updatedAt, record.deviceId, record.deleted]
         );
     }
 }
