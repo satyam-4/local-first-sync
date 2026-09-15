@@ -17,8 +17,10 @@ export function createNote(text: string): string {
 
 export function saveNote(id: string, text: string): SyncRecord<Note> {
     const records: Record<string, SyncRecord<Note>> = getAllRecords<Note>(COLLECTION);
+    const versionId = crypto.randomUUID();
     const record = {
         id,
+        versionId,
         collection: COLLECTION,
         data: { text },
         updatedAt: Date.now(),

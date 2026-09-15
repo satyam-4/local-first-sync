@@ -4,9 +4,10 @@ import type { RecordRow, PushRecordRequest } from '../types/record.js';
 export async function insertRecord(records: PushRecordRequest[]): Promise<void> {
     for (const record of records) {
         await pool.query(
-            `INSERT INTO records (id, collection, data, updated_at, device_id, deleted)
-             VALUES ($1, $2, $3, $4, $5, $6)`,
-            [record.id, record.collection, record.data, record.updatedAt, record.deviceId, record.deleted]
+            `INSERT INTO records (version_id, id, collection, data, updated_at, device_id, deleted)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            ON CONFLICT (version_id) DO NOTHING`,
+            [record.versionId, record.id, record.collection, record.data, record.updatedAt, record.deviceId, record.deleted]
         );
     }
 }
@@ -14,9 +15,9 @@ export async function insertRecord(records: PushRecordRequest[]): Promise<void> 
 export async function getChangesSince(since: number): Promise<RecordRow[]> {
     const result = await pool.query<RecordRow>(
         `SELECT DISTINCT ON (collection, id) *
-         FROM records
-         WHERE updated_at > $1
-         ORDER BY collection, id, updated_at DESC`,
+        FROM records
+        WHERE updated_at > $1
+        ORDER BY collection, id, updated_at DESC`,
         [since]
     );
     return result.rows;
