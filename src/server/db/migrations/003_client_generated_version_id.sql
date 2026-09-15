@@ -1,0 +1,1 @@
+ALTER TABLE records ALTER COLUMN version_id DROP DEFAULT;

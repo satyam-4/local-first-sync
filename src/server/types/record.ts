@@ -1,6 +1,6 @@
 export interface RecordRow {
-    version_id: string;
     id: string;
+    version_id: string;
     collection: string;
     data: unknown;
     updated_at: string;   
@@ -10,6 +10,7 @@ export interface RecordRow {
 
 export interface PushRecordRequest {
     id: string;
+    versionId: string;
     collection: string;
     data: unknown;
     updatedAt: number;
