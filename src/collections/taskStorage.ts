@@ -25,9 +25,11 @@ export function saveTask(
     title: string,
     description: string,
     done: boolean): SyncRecord<Task> {
+    const versionId = crypto.randomUUID();
     const records: Record<string, SyncRecord<Task>> = getAllRecords<Task>(COLLECTION);
     const record = {
         id,
+        versionId,
         collection: COLLECTION,
         data: { 
             title,

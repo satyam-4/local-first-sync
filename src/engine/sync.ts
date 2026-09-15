@@ -17,6 +17,7 @@ let syncInProgress = false;
 function toSyncRecord(raw: IncomingRecord): SyncRecord {
     return {
         id: raw.id,
+        versionId: raw.version_id,
         collection: raw.collection,
         data: raw.data,
         updatedAt: Number(raw.updated_at),
@@ -73,7 +74,7 @@ export async function syncOutbox(): Promise<void> {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(outbox)
         });
-        if (!res.ok) {
+        if (res.ok) {
             throw new Error(`Push failed: ${res.status}`);
         }
         setOutbox([]);
