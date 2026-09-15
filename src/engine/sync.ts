@@ -1,6 +1,6 @@
 import { getOutbox, setOutbox } from './outbox.js';
 import { getAllRecords, saveAllRecords } from './storage.js';
-import type { SyncRecord } from './types.js';
+import type { IncomingRecord, SyncRecord } from './types.js';
 
 const SERVER_URL = 'http://localhost:3000';
 
@@ -14,19 +14,17 @@ function setLastSyncedAt(ts: number): void {
 
 let syncInProgress = false;
 
-/*
-    pull changes will return something like this:
-    {
-        collection_name: [
-            {
-                id: record_id;
-                collection: collection_name;
-                data: data;
-                ...
-            },...
-        ],...
-    }
-*/
+function toSyncRecord(raw: IncomingRecord): SyncRecord {
+    return {
+        id: raw.id,
+        collection: raw.collection,
+        data: raw.data,
+        updatedAt: Number(raw.updated_at),
+        deviceId: raw.device_id,
+        deleted: raw.deleted
+    };
+}
+
 export async function pullChanges(): Promise<void> {
     if (syncInProgress) return;
     syncInProgress = true;
@@ -37,16 +35,15 @@ export async function pullChanges(): Promise<void> {
         if (!res.ok) {
             throw new Error(`Pull failed: ${res.status} ${res.statusText}`);
         }      
-        const incomingChanges: Record<string, SyncRecord[]> = await res.json();
-        const collections: [string, SyncRecord[]][] = Object.entries(incomingChanges);
-
+        const incomingChanges: Record<string, IncomingRecord[]> = await res.json();
         let maxTimestamp = since;
 
-        for (const [collection, incomingRecords] of collections) {
+        for (const [collection, incomingRecords] of Object.entries(incomingChanges)) {
             const localRecords = getAllRecords(collection);
-            for (const record of incomingRecords) {
+            for (const raw of incomingRecords) {
+                const record = toSyncRecord(raw);
                 const existing: SyncRecord | undefined = localRecords[record.id];
-                const incomingUpdatedAt: number = record.updatedAt;
+                const incomingUpdatedAt: number = Number(record.updatedAt);
                 const isNewer = !existing || incomingUpdatedAt > existing.updatedAt;
 
                 if (isNewer) {
@@ -60,7 +57,7 @@ export async function pullChanges(): Promise<void> {
             }
             saveAllRecords(collection, localRecords);
         }
-        setLastSyncedAt(maxTimestamp);
+        setLastSyncedAt(Number(maxTimestamp));
     } finally {
         syncInProgress = false;
     }
