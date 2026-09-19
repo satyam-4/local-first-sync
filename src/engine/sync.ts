@@ -74,7 +74,7 @@ export async function syncOutbox(): Promise<void> {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(outbox)
         });
-        if (res.ok) {
+        if (!res.ok) {
             throw new Error(`Push failed: ${res.status}`);
         }
         setOutbox([]);
