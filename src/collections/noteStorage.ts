@@ -9,14 +9,14 @@ export interface Note {
 
 const COLLECTION = 'notes';
 
-export function createNote(text: string): string {
+export async function createNote(text: string): Promise<string> {
     const id = crypto.randomUUID();
-    saveNote(id, text);
+    await saveNote(id, text);
     return id;
 }
 
-export function saveNote(id: string, text: string): SyncRecord<Note> {
-    const records: Record<string, SyncRecord<Note>> = getAllRecords<Note>(COLLECTION);
+export async function saveNote(id: string, text: string): Promise<SyncRecord<Note>> {
+    const records: Record<string, SyncRecord<Note>> = await getAllRecords<Note>(COLLECTION);
     const versionId = crypto.randomUUID();
     const record = {
         id,
@@ -27,12 +27,11 @@ export function saveNote(id: string, text: string): SyncRecord<Note> {
         deviceId: getDeviceId(),
         deleted: false
     }
-    records[id] = record;
-    saveAllRecords(COLLECTION, records);
-    addToOutbox(record);
+    await saveAllRecords(COLLECTION, records);
+    await addToOutbox(record);
     return record;
 }
 
-export function getAllNotes(): Record<string, SyncRecord<Note>> {
-    return getAllRecords<Note>(COLLECTION);
+export async function getAllNotes(): Promise<Record<string, SyncRecord<Note>>> {
+    return await getAllRecords<Note>(COLLECTION);
 }

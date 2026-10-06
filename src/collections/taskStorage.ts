@@ -11,22 +11,15 @@ export interface Task {
 
 const COLLECTION = 'tasks';
 
-export function createTask(
-    title: string,
-    description: string,
-    done: boolean): string {
+export async function createTask(title: string, description: string, done: boolean): Promise<string> {
     const id = crypto.randomUUID();
     saveTask(id, title, description, done);
     return id;
 }
 
-export function saveTask(
-    id: string, 
-    title: string,
-    description: string,
-    done: boolean): SyncRecord<Task> {
+export async function saveTask(id: string, title: string,description: string,done: boolean): Promise<SyncRecord<Task>> {
     const versionId = crypto.randomUUID();
-    const records: Record<string, SyncRecord<Task>> = getAllRecords<Task>(COLLECTION);
+    const records: Record<string, SyncRecord<Task>> = await getAllRecords<Task>(COLLECTION);
     const record = {
         id,
         versionId,
@@ -40,12 +33,12 @@ export function saveTask(
         deviceId: getDeviceId(),
         deleted: false
     }
-    records[id] = record;
-    saveAllRecords(COLLECTION, records);
-    addToOutbox(record);
+
+    await saveAllRecords(COLLECTION, records);
+    await addToOutbox(record);
     return record;
 }
 
-export function getAllTasks(): Record<string, SyncRecord<Task>> {
-    return getAllRecords<Task>(COLLECTION);
+export async function getAllTasks(): Promise<Record<string, SyncRecord<Task>>> {
+    return await getAllRecords<Task>(COLLECTION);
 }
