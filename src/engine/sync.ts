@@ -1,16 +1,8 @@
 import { getOutbox, setOutbox } from './outbox.js';
-import { getAllRecords, saveAllRecords } from './storage.js';
+import { getAllRecords, getLastSyncedAt, saveAllRecords, saveLastSyncedAt, storageKey } from './storage.js';
 import type { IncomingRecord, SyncRecord } from './types.js';
 
 const SERVER_URL = 'http://localhost:3000';
-
-function getLastSyncedAt(): number {
-    return Number(localStorage.getItem(`lastSyncedAt`) || 0);
-}
-
-function setLastSyncedAt(ts: number): void {
-    localStorage.setItem(`lastSyncedAt`, String(ts));
-}
 
 let syncInProgress = false;
 
@@ -31,7 +23,7 @@ export async function pullChanges(): Promise<void> {
     syncInProgress = true;
 
     try {
-        const since = getLastSyncedAt();
+        const since = await getLastSyncedAt();
         const res = await fetch(`${SERVER_URL}/sync/since/${since}`); 
         if (!res.ok) {
             throw new Error(`Pull failed: ${res.status} ${res.statusText}`);
@@ -40,7 +32,7 @@ export async function pullChanges(): Promise<void> {
         let maxTimestamp = since;
 
         for (const [collection, incomingRecords] of Object.entries(incomingChanges)) {
-            const localRecords = getAllRecords(collection);
+            const localRecords = await getAllRecords(storageKey(collection));
             for (const raw of incomingRecords) {
                 const record = toSyncRecord(raw);
                 const existing: SyncRecord | undefined = localRecords[record.id];
@@ -58,14 +50,14 @@ export async function pullChanges(): Promise<void> {
             }
             saveAllRecords(collection, localRecords);
         }
-        setLastSyncedAt(Number(maxTimestamp));
+        saveLastSyncedAt(Number(maxTimestamp));
     } finally {
         syncInProgress = false;
     }
 }
 
 export async function syncOutbox(): Promise<void> {
-    const outbox: SyncRecord[] = getOutbox();
+    const outbox: SyncRecord[] = await getOutbox();
     if (outbox.length === 0) return;
     
     try {
@@ -77,7 +69,7 @@ export async function syncOutbox(): Promise<void> {
         if (!res.ok) {
             throw new Error(`Push failed: ${res.status}`);
         }
-        setOutbox([]);
+        await setOutbox([]);
     } catch (error) {
         console.log('sync outbox failed');
     }
