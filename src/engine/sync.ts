@@ -1,5 +1,5 @@
 import { getOutbox, setOutbox } from './outbox.js';
-import { getAllRecords, getLastSyncedAt, saveAllRecords, saveLastSyncedAt, storageKey } from './storage.js';
+import { getAllRecords, getLastSyncedAt, saveAllRecords, saveLastSyncedAt } from './storage.js';
 import type { IncomingRecord, SyncRecord } from './types.js';
 
 const SERVER_URL = 'http://localhost:3000';
@@ -32,7 +32,7 @@ export async function pullChanges(): Promise<void> {
         let maxTimestamp = since;
 
         for (const [collection, incomingRecords] of Object.entries(incomingChanges)) {
-            const localRecords = await getAllRecords(storageKey(collection));
+            const localRecords = await getAllRecords(collection);
             for (const raw of incomingRecords) {
                 const record = toSyncRecord(raw);
                 const existing: SyncRecord | undefined = localRecords[record.id];
