@@ -1,8 +1,9 @@
 import { localStorageAdapter } from "./adapters/localStorageAdapter.js";
+import { indexedDbAdapter } from "./adapters/indexedDbAdapter.js";
 import type { StorageAdapter } from "./storageAdapter.js";
 import type { SyncRecord } from "./types.js";
 
-let adapter: StorageAdapter = localStorageAdapter;
+let adapter: StorageAdapter = indexedDbAdapter;
 const LAST_SYNCED_AT_KEY = 'lastSyncedAt';
 
 export function getStorageAdapter() {

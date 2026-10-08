@@ -27,6 +27,7 @@ export async function saveNote(id: string, text: string): Promise<SyncRecord<Not
         deviceId: getDeviceId(),
         deleted: false
     }
+    records[id] = record;
     await saveAllRecords(COLLECTION, records);
     await addToOutbox(record);
     return record;

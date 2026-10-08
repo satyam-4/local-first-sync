@@ -33,7 +33,7 @@ export async function saveTask(id: string, title: string,description: string,don
         deviceId: getDeviceId(),
         deleted: false
     }
-
+    records[id] = record;
     await saveAllRecords(COLLECTION, records);
     await addToOutbox(record);
     return record;
